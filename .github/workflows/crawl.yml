@@ -1,0 +1,22 @@
+name: ATMON World Crawler
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install Dependencies
+        run: pip install requests beautifulsoup4 huggingface_hub
+      - name: Run World Wide Crawlers
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python atmon_crawler.py
