@@ -1,0 +1,24 @@
+name: ATMON PRO WORLD CRAWL
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shard: [0, 1, 2, 3, 4]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests beautifulsoup4 huggingface_hub lxml -q
+      - env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SHARD_ID: ${{ matrix.shard }}
+          NUM_SHARDS: 5
+          TARGET_PAGES: 3000
+        run: python atmon_crawler.py
